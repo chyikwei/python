@@ -1023,7 +1023,7 @@ class PubnubBase(object):
                              callback=self._return_wrapped_callback(callback),
                              error=self._return_wrapped_callback(error))
 
-    def here_now(self, channel, uuids=True, state=False,
+    def here_now(self, channel=None, channel_group=None, uuids=True, state=False,
                  callback=None, error=None):
         """Get here now data.
 
@@ -1036,8 +1036,14 @@ class PubnubBase(object):
         Args:
             channel:    (string) (optional)
                         Specifies the channel name to return occupancy
-                        results. If channel is not provided, here_now will
-                        return data for all channels.
+                        results. If channel and channel group are not
+                        provided, here_now will return data for all
+                        channels. If both channel and channel group are
+                        provided, the function will return error.
+
+            channel_group: (string) (optional)
+                        Specifies the channel group name to return
+                        occupancy results.
 
             callback:   (optional)
                         A callback method should be passed to the method.
@@ -1088,6 +1094,11 @@ class PubnubBase(object):
             urlcomponents.append(channel)
 
         data = {'auth': self.auth_key, 'pnsdk': self.pnsdk}
+
+        if channel_group is not None and len(channel_group) > 0:
+            urlcomponents.append('channel')
+            urlcomponents.append(',')
+            data['channel-group'] = channel_group
 
         if state is True:
             data['state'] = '1'
